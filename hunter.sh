@@ -42,7 +42,7 @@ do
         fi
     else
         if [ ${ar[i]} == 1 ]; then
-            ar[i] = 0
+            ar[i]=0
         fi
     fi
 done
