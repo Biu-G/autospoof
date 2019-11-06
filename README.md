@@ -1,3 +1,4 @@
+
 private net spoof shell usage:
 
 1. open wireshark/tshark/fidder/charles to capture packets
@@ -6,3 +7,4 @@ private net spoof shell usage:
 4. bash hunter.sh
 5. check the one you opened in procedure 1 
 6. now you are able to receive all the floods between routers and users in the private net you're located in
+
